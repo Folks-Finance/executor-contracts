@@ -1,0 +1,12 @@
+[submodule "lib/wormhole-solidity-sdk"]
+	path = lib/wormhole-solidity-sdk
+	url = https://github.com/wormhole-foundation/wormhole-solidity-sdk
+[submodule "lib/example-messaging-executor"]
+	path = lib/example-messaging-executor
+	url = https://github.com/wormholelabs-xyz/example-messaging-executor
+[submodule "lib/example-ntt-with-executor-evm"]
+	path = lib/example-ntt-with-executor-evm
+	url = https://github.com/wormholelabs-xyz/example-ntt-with-executor-evm
+[submodule "lib/native-token-transfers"]
+	path = lib/native-token-transfers
+	url = https://github.com/wormhole-foundation/native-token-transfers

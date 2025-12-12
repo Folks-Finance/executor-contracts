@@ -1,0 +1,92 @@
+{
+  "name": "executor-contracts",
+  "description": "PuyaPy implementation for a Executor and TokenPaymentExecutor. Solidity implementation of TokenPaymentExecutor.",
+  "author": "Folks Finance",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Folks-Finance/executor-contracts.git"
+  },
+  "files": [
+    "executor_contracts",
+    "lib",
+    "test"
+  ],
+  "type": "module",
+  "scripts": {
+    "build:forge": "forge build",
+    "build:hardhat": "npx hardhat compile",
+    "build:evm": "npm run build:forge && npm run build:hardhat",
+    "teal": "algokit compile py ./executor_contracts --target-avm-version 11 --optimization-level 2 --no-output-source-map --no-output-client --no-output-arc32 --no-output-arc56 --output-teal --out-dir ../specs/teal",
+    "arc56": "algokit compile py ./executor_contracts --target-avm-version 11 --optimization-level 2 --no-output-source-map --no-output-client --no-output-arc32 --output-arc56 --no-output-teal --out-dir ../specs/arc56",
+    "client": "algokit generate client ./specs/arc56 --output ./specs/client/{contract_name}.client.ts --language typescript",
+    "build:avm": "npm run teal && npm run arc56 && npm run client",
+    "clean:forge": "forge clean",
+    "clean:hardhat": "npx hardhat clean",
+    "clean:evm": "npm run clean:forge && npm run clean:hardhat",
+    "clean:avm": "rm -rf ./specs",
+    "check": "prettier --check .",
+    "format": "prettier --write .",
+    "lint:check": "eslint .",
+    "lint": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "commit": "cz",
+    "test:evm": "npx hardhat test nodejs",
+    "test:avm": "tsx --test test/avm/**/*.test.ts",
+    "coverage:evm": "npx hardhat test nodejs --coverage"
+  },
+  "dependencies": {
+    "@algorandfoundation/algokit-utils": "^9.1.1",
+    "@openzeppelin/contracts": "^5.4.0",
+    "algosdk": "^3.3.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "@commitlint/cz-commitlint": "^20.2.0",
+    "@eslint/js": "^9.39.1",
+    "@noble/hashes": "^1.8.0",
+    "@nomicfoundation/hardhat-network-helpers": "^3.0.3",
+    "@nomicfoundation/hardhat-node-test-runner": "^3.0.7",
+    "@nomicfoundation/hardhat-viem": "^3.0.1",
+    "@nomicfoundation/hardhat-viem-assertions": "^3.0.4",
+    "@openzeppelin/test-helpers": "^0.5.16",
+    "@types/chai": "^5.2.3",
+    "@typescript-eslint/parser": "^8.49.0",
+    "chai": "^5.3.3",
+    "commitizen": "^4.3.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^0.5.3",
+    "eslint-plugin-unicorn": "^62.0.0",
+    "globals": "^16.5.0",
+    "hardhat": "^3.0.17",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.5.3",
+    "prettier-plugin-solidity": "^1.4.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.49.0",
+    "viem": "^2.41.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "keywords": [
+    "folks-finance",
+    "executor",
+    "bridge",
+    "wormhole",
+    "ntt",
+    "vaa",
+    "algorand",
+    "solidity",
+    "smart-contracts",
+    "puyapy"
+  ]
+}

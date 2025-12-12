@@ -1,0 +1,9 @@
+lib/
+abi/
+.github/
+coverage/
+cache/
+cache_forge/
+artifacts/
+specs/
+venv/

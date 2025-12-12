@@ -1,0 +1,153 @@
+name: ci
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: 'v1.5.0'
+
+      - name: Build EVM
+        run: npm run build:evm
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Build AVM
+        run: npm run build:avm
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            artifacts/
+            cache/
+            cache_forge/
+            lib/
+            out/
+            specs/
+          retention-days: 1
+
+
+  prettier:
+    needs: setup-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Add node_modules to PATH
+        run: echo "${{ github.workspace }}/node_modules/.bin" >> $GITHUB_PATH
+
+      - name: Prettier
+        run: npm run check
+
+  lint:
+    needs: setup-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Lint
+        run: npm run lint:check
+
+  typecheck:
+    needs: setup-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Typecheck
+        run: npm run typecheck
+
+  evm-test:
+    needs: setup-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Run EVM tests
+        run: npm run test:evm
+
+  avm-test:
+    needs: setup-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Start AlgoKit localnet
+        run: |
+          python3 -m algokit localnet start
+          python3 -m algokit localnet status
+
+      - name: Run AVM tests
+        run: npm run test:avm
+
+      - name: Stop AlgoKit localnet
+        if: always()
+        run: python3 -m algokit localnet stop

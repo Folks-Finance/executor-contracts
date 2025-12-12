@@ -1,0 +1,8 @@
+algokit==2.9.1
+algokit-utils==4.2.2
+algorand-python==3.2.0
+algorand-ntt-contracts @ git+https://github.com/Folks-Finance/algorand-ntt-contracts.git@99dfaec5420fa22cfcfaef756f96bfaa5b79701b
+algorand-smart-contract-library @ git+https://github.com/Folks-Finance/algorand-smart-contract-library.git@677999ff8e82bb6cb0e726e21c2569db87984bac
+puyapy==5.5.0
+py-algorand-sdk==2.11.1
+setuptools==80.9.0

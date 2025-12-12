@@ -1,0 +1,17 @@
+name: "Setup Node"
+description: "Setup Node.js and npm and install dependencies"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "npm"
+
+    - name: Install dependencies
+      shell: bash
+      env:
+        HUSKY: "0"
+      run: npm ci
