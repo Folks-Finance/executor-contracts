@@ -1,0 +1,58 @@
+{
+  "algorand": {
+    "executorAppId": 3278916379,
+    "tokenPaymentExecutorAppId": 3278916525,
+    "nttManagerWithExecutorAppId": 3278916601,
+    "nttManagerWithTokenPaymentExecutorAppId": 3278916723,
+    "nttV1ReceiveWithGasDropOffAppId": 3278916778,
+    "vaaV1ReceiveWithGasDropOffAppId": 3278916846
+  },
+  "avalanche": {
+    "tokenPaymentExecutor": "0xeBb3c966726E03293522004A752D0A08fB1B57a4",
+    "nttManagerWithTokenPaymentExecutor": "0x501C95e5E7B0661Dd4c2D8625D13112ad337271F",
+    "safeMultiReceiveWithGasDropOff": "0x6C93Ec0264Ea2b086E6F487bA4B9f0a319c8c3cA",
+    "safeVAAv1ReceiveWithGasDropOff": "0x155cEA46BA3cBcc9E9E23d7F5A22503D1468E2FE"
+  },
+  "ethereum": {
+    "tokenPaymentExecutor": "0x17BbbBDC55e6Ae7bEbFb071688B706d6010bD0a9",
+    "nttManagerWithTokenPaymentExecutor": "0x8E4dB410c77300c077385C344BeD5B902c9Df71d",
+    "safeMultiReceiveWithGasDropOff": "0x38c0780cEF52d88C8A5E18AA9a1C0cA3D9c692e9",
+    "safeVAAv1ReceiveWithGasDropOff": "0x380EfD1D577E75584CBE2890639eabA19BB851a9"
+  },
+  "base": {
+    "tokenPaymentExecutor": "0xC6B780550De055dDb5E8A765e0e30a2C905214A9",
+    "nttManagerWithTokenPaymentExecutor": "0x4bbe096C7530B218ba001C6d84798F01ea917868",
+    "safeMultiReceiveWithGasDropOff": "0x0b2730D5F4468d6e06A2e6A3562f94157F8dEDeA",
+    "safeVAAv1ReceiveWithGasDropOff": "0x330866FfD3c24962c58Ff584FF2Ab68922898FCF"
+  },
+  "bsc": {
+    "tokenPaymentExecutor": "0xf2B77bff4E6886eFBfC333C0624041ae51263Ef3",
+    "nttManagerWithTokenPaymentExecutor": "0xd5b2957F63eEB809A77ED3EBAd6bf5BAC9A818C8",
+    "safeMultiReceiveWithGasDropOff": "0xa436ED7fC96E1f4D9a34e5160e401D81901CE383",
+    "safeVAAv1ReceiveWithGasDropOff": "0x2a3E9E3517DC89ff9ea4E7D91177899a1444bA2B"
+  },
+  "arbitrum": {
+    "tokenPaymentExecutor": "0xC6F812cad94BbfAF3CC341161658f913676324Ea",
+    "nttManagerWithTokenPaymentExecutor": "0x6352Ece82D55ccd2159E9B221b2299cAEefF54E9",
+    "safeMultiReceiveWithGasDropOff": "0x061c2eDd8573CA2207B3515bE47114749124fDff",
+    "safeVAAv1ReceiveWithGasDropOff": "0xd6d81B18e8f002E31289C92CB39c60B8eA674ca1"
+  },
+  "polygon": {
+    "tokenPaymentExecutor": "0x269d9B224104128A60EdB339125A152aCAbed3C2",
+    "nttManagerWithTokenPaymentExecutor": "0x5288ac81Ec57A3DF7feBBa8c305506c28b0B05B6",
+    "safeMultiReceiveWithGasDropOff": "0x0b2730D5F4468d6e06A2e6A3562f94157F8dEDeA",
+    "safeVAAv1ReceiveWithGasDropOff": "0x268aAC40eDaAE6872ba26a67Ebeab3a9DcE5aa48"
+  },
+  "seiEvm": {
+    "tokenPaymentExecutor": "0x8aC97DeE1053da1D33EB7784765A14377F0140DC",
+    "nttManagerWithTokenPaymentExecutor": "0x3F2647cc4aff2A8342e1C8306Ad4B7c72a850E91",
+    "safeMultiReceiveWithGasDropOff": "0xd6d81B18e8f002E31289C92CB39c60B8eA674ca1",
+    "safeVAAv1ReceiveWithGasDropOff": "0x365DDa3E4526A4a491EBcecdf9A63159474f41C5"
+  },
+  "monad": {
+    "tokenPaymentExecutor": "0xb6F5aC12AcE17EeE0681FB6be93a2810fDAe6db9",
+    "nttManagerWithTokenPaymentExecutor": "0x028864F9CE26E76aFb748Ed08F7631d879a774Ad",
+    "safeMultiReceiveWithGasDropOff": "0xFB021526454A3C190d59206600f1a874FA8FaB0c",
+    "safeVAAv1ReceiveWithGasDropOff": "0xfc728c955111b358890e7acFEf91C47EA7a57007"
+  }
+}
