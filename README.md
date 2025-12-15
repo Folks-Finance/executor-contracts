@@ -148,5 +148,5 @@ bytes32  tokenAddress        // UniversalAddress of the custom token on the sour
 
 [license-image]: https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg?style=flat-square
 [license-url]: https://opensource.org/license/apache-2-0
-[ci-image]: https://img.shields.io/github/actions/workflow/status/Folks-Finance/executor-contracts/format.yml?branch=main&logo=github&style=flat-square
-[ci-url]: https://github.com/Folks-Finance/executor-contracts/actions/workflows/format.yml
+[ci-image]: https://img.shields.io/github/actions/workflow/status/Folks-Finance/executor-contracts/ci.yml?branch=main&logo=github&style=flat-square
+[ci-url]: https://github.com/Folks-Finance/executor-contracts/actions/workflows/ci.yml
