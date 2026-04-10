@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Apache 2
-pragma solidity ^0.8.19;
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity 0.8.23;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -8,9 +8,10 @@ import "@example-vaa-executor/libraries/ExecutorMessages.sol";
 import "@native-token-transfers/interfaces/INttManager.sol";
 
 import "./interfaces/INttManagerWithTokenPaymentExecutor.sol";
+import "./interfaces/INttManagerWethUnwrap.sol";
 import "./interfaces/ITokenPaymentExecutor.sol";
 
-string constant nttManagerWithExecutorVersion = "NttManagerWithTokenPaymentExecutor-0.0.1";
+string constant nttManagerWithExecutorVersion = "NttManagerWithTokenPaymentExecutor-0.0.2";
 
 /// @title  NttManagerWithTokenPaymentExecutor
 /// @notice The NttManagerWithTokenPaymentExecutor contract is a shim contract that initiates
@@ -56,8 +57,10 @@ contract NttManagerWithTokenPaymentExecutor is INttManagerWithTokenPaymentExecut
         // Transfer the fee to the referrer.
         amount = payFee(token, amount, feeArgs, nttm, recipientChain);
 
+        // Approve the bridge to spend the tokens.
+        _maxApproveIfNeeded(token, nttManager, amount);
+
         // Initiate the transfer.
-        SafeERC20.forceApprove(IERC20(token), nttManager, amount);
         msgId = nttm.transfer{ value: msg.value }(
             amount,
             recipientChain,
@@ -67,7 +70,6 @@ contract NttManagerWithTokenPaymentExecutor is INttManagerWithTokenPaymentExecut
             encodedInstructions
         );
 
-        uint256 executorFee = estimatedCost; // Avoid stack too deep error
         {
             // Approve custom token fee for executor.
             bytes32 universalTokenAddress;
@@ -75,13 +77,89 @@ contract NttManagerWithTokenPaymentExecutor is INttManagerWithTokenPaymentExecut
                 universalTokenAddress := calldataload(add(add(executorArgs, calldataload(add(executorArgs, 32))), 132))
             }
             IERC20 tokenAddress = IERC20(address(uint160(uint256(universalTokenAddress))));
-            SafeERC20.safeTransferFrom(tokenAddress, msg.sender, address(this), executorFee);
-            SafeERC20.forceApprove(tokenAddress, address(tokenPaymentExecutor), executorFee);
+            SafeERC20.safeTransferFrom(tokenAddress, msg.sender, address(this), estimatedCost);
+            SafeERC20.forceApprove(tokenAddress, address(tokenPaymentExecutor), estimatedCost);
         }
 
         // Generate the executor event.
         tokenPaymentExecutor.requestExecutionWithTokenPayment(
-            executorFee,
+            estimatedCost,
+            recipientChain,
+            nttm.getPeer(recipientChain).peerAddress,
+            executorArgs.refundAddress,
+            executorArgs.signedQuote,
+            ExecutorMessages.makeNTTv1Request(
+                chainId,
+                bytes32(uint256(uint160(address(nttm)))),
+                bytes32(uint256(msgId))
+            ),
+            executorArgs.instructions
+        );
+
+        // Refund any excess value.
+        uint256 currentBalance = address(this).balance;
+        if (currentBalance > 0) {
+            (bool refundSuccessful, ) = payable(executorArgs.refundAddress).call{ value: currentBalance }("");
+            if (!refundSuccessful) {
+                revert RefundFailed(currentBalance);
+            }
+        }
+    }
+
+    function transferETH(
+        uint256 estimatedCost,
+        address nttManager,
+        uint256 amount,
+        uint16 recipientChain,
+        bytes32 recipientAddress,
+        bytes32 refundAddress,
+        bytes memory encodedInstructions,
+        ExecutorArgs calldata executorArgs,
+        FeeArgs calldata feeArgs
+    ) external payable returns (uint64 msgId) {
+        INttManagerWethUnwrap nttm = INttManagerWethUnwrap(nttManager);
+        IWETH weth = nttm.weth();
+        address token = address(weth);
+        require(token != address(0), "WETH does not exist");
+
+        // This requires the amount + executionAmount to exactly equal msg.value
+        // because `transferTokensWithRelay` will revert if there is any extra.
+        require(msg.value >= amount, "Not enough msg value");
+        uint256 remainingValue = msg.value - amount;
+
+        // Deposit the amount to be transferred into WETH.
+        weth.deposit{ value: amount }();
+
+        // Transfer the fee to the referrer.
+        amount = payFee(token, amount, feeArgs, nttm, recipientChain);
+
+        // Approve the bridge to spend the tokens.
+        _maxApproveIfNeeded(token, nttManager, amount);
+
+        // Initiate the transfer.
+        msgId = nttm.transfer{ value: remainingValue }(
+            amount,
+            recipientChain,
+            recipientAddress,
+            refundAddress,
+            false,
+            encodedInstructions
+        );
+
+        {
+            // Approve custom token fee for executor.
+            bytes32 universalTokenAddress;
+            assembly {
+                universalTokenAddress := calldataload(add(add(executorArgs, calldataload(add(executorArgs, 32))), 132))
+            }
+            IERC20 tokenAddress = IERC20(address(uint160(uint256(universalTokenAddress))));
+            SafeERC20.safeTransferFrom(tokenAddress, msg.sender, address(this), estimatedCost);
+            SafeERC20.forceApprove(tokenAddress, address(tokenPaymentExecutor), estimatedCost);
+        }
+
+        // Generate the executor event.
+        tokenPaymentExecutor.requestExecutionWithTokenPayment(
+            estimatedCost,
             recipientChain,
             nttm.getPeer(recipientChain).peerAddress,
             executorArgs.refundAddress,
@@ -164,5 +242,13 @@ contract NttManagerWithTokenPaymentExecutor is INttManagerWithTokenPaymentExecut
         uint8 fromDecimals = nttManager.tokenDecimals();
         TrimmedAmount trimmedAmount = amount.trim(fromDecimals, toDecimals);
         newFee = trimmedAmount.untrim(fromDecimals);
+    }
+
+    function _maxApproveIfNeeded(address tokenAddr, address spender, uint256 amount) internal {
+        IERC20 token = IERC20(tokenAddr);
+        uint256 currentAllowance = token.allowance(address(this), spender);
+        if (currentAllowance < amount) {
+            SafeERC20.forceApprove(token, spender, type(uint256).max);
+        }
     }
 }
