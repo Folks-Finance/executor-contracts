@@ -18,7 +18,7 @@ export const REQ_VAA_V1 = stringToHex("ERV1");
 export const REQ_NTT_V1 = stringToHex("ERN1");
 
 export const DEFAULT_TOKEN_PAYMENT_EXECUTOR_VERSION = "TokenPaymentExecutor-0.0.1";
-export const DEFAULT_NTT_MANAGER_WITH_TOKEN_PAYMENT_EXECUTOR_VERSION = "NttManagerWithTokenPaymentExecutor-0.0.1";
+export const DEFAULT_NTT_MANAGER_WITH_TOKEN_PAYMENT_EXECUTOR_VERSION = "NttManagerWithTokenPaymentExecutor-0.0.2";
 export const DEFAULT_QUOTER_ADDRESS = "0xdaC17f958d2eE523a2206206994597C13D831bC7";
 export const DEFAULT_SOURCE_ID = 321;
 export const DEFAULT_SOURCE_TOKEN_PRICE = 8_000_000_000_000_000_000n;

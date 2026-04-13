@@ -48,4 +48,27 @@ interface INttManagerWithTokenPaymentExecutor {
         ExecutorArgs calldata executorArgs,
         FeeArgs calldata feeArgs
     ) external payable returns (uint64 msgId);
+
+    /// @notice Transfer a given amount to a recipient on a given chain using the Executor for relaying.
+    /// @param estimatedCost Delivery cost in custom token.
+    /// @param nttManager The NTT manager used for the transfer.
+    /// @param amount The amount to transfer.
+    /// @param recipientChain The Wormhole chain ID for the destination.
+    /// @param recipientAddress The recipient address.
+    /// @param refundAddress The address to which a refund for unussed gas is issued on the recipient chain.
+    /// @param encodedInstructions Additional instructions to be forwarded to the recipient chain.
+    /// @param executorArgs The arguments to be passed into the Executor.
+    /// @param feeArgs The arguments used to compute and pay the referrer fee.
+    /// @return msgId The resulting message ID of the transfer
+    function transferETH(
+        uint256 estimatedCost,
+        address nttManager,
+        uint256 amount,
+        uint16 recipientChain,
+        bytes32 recipientAddress,
+        bytes32 refundAddress,
+        bytes memory encodedInstructions,
+        ExecutorArgs calldata executorArgs,
+        FeeArgs calldata feeArgs
+    ) external payable returns (uint64 msgId);
 }
